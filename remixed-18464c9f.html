@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Major US Hotel Brands in Peru</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f6f2;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+
+  .page { max-width: 960px; margin: 0 auto; }
+
+  .brand-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .brand-logo { font-size: 13px; font-weight: 700; letter-spacing: 0.3px; color: #fff; background: #1a1a1a; padding: 4px 10px; border-radius: 6px; }
+  .brand-divider { font-size: 12px; color: #ccc; }
+  .brand-label { font-size: 12px; color: #999; font-weight: 500; letter-spacing: 0.2px; text-transform: uppercase; }
+
+  header { margin-bottom: 24px; }
+  header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; color: #1a1a1a; margin-bottom: 6px; }
+  header p { font-size: 13px; color: #888; line-height: 1.6; }
+
+  /* Filters */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: flex-end;
+  }
+
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 10px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.3px; }
+
+  .filter-group select {
+    font-size: 12px;
+    font-family: inherit;
+    color: #1a1a1a;
+    background: #fff;
+    border: 1px solid #e0ddd8;
+    border-radius: 7px;
+    padding: 6px 28px 6px 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23aaa'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 9px center;
+    cursor: pointer;
+    min-width: 140px;
+  }
+
+  .filter-group select:focus { outline: none; border-color: #bbb; }
+
+  .reset-btn {
+    font-size: 11px;
+    font-family: inherit;
+    color: #888;
+    background: none;
+    border: 1px solid #e0ddd8;
+    border-radius: 7px;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin-bottom: 0;
+    align-self: flex-end;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .reset-btn:hover { color: #333; border-color: #bbb; }
+
+  .result-count { font-size: 11px; color: #aaa; align-self: flex-end; margin-left: auto; }
+
+  /* Table */
+  .card { background: #fff; border-radius: 14px; border: 1px solid #e8e6e0; overflow: hidden; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead { background: #fafaf8; border-bottom: 1px solid #e8e6e0; }
+
+  th {
+    padding: 12px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #999;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  th:hover { color: #333; }
+  th.active { color: #1a1a1a; }
+  th .icon { margin-left: 4px; opacity: 0.35; font-style: normal; font-size: 10px; }
+  th.active .icon { opacity: 1; }
+
+  td { padding: 10px 14px; border-bottom: 1px solid #f0ede8; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafaf8; }
+
+  .hotel-name { font-weight: 500; color: #1a1a1a; line-height: 1.35; font-size: 13px; }
+  .hotel-loc { font-size: 11px; color: #aaa; margin-top: 1px; }
+
+  .badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.2px; }
+  .badge-hyatt    { background: #e8f2fd; color: #1a5fa8; }
+  .badge-marriott { background: #fef3e2; color: #8a4e00; }
+  .badge-ihg      { background: #f0effe; color: #4a35c0; }
+  .badge-hilton   { background: #eaf5e0; color: #2d6b0e; }
+
+  .cpp-val { font-weight: 600; font-size: 13px; text-align: right; color: #1a1a1a; }
+  .stars { font-size: 13px; letter-spacing: -1px; white-space: nowrap; }
+  .star-on  { color: #c8922a; }
+  .star-off { color: #ddd; }
+
+  .avail { font-size: 12px; color: #aaa; text-align: right; white-space: nowrap; }
+  .avail.high { color: #2d8a4e; font-weight: 500; }
+  .avail.mid  { color: #c8922a; font-weight: 500; }
+  .avail.low  { color: #c0392b; font-weight: 500; }
+  .na { color: #ccc; }
+
+  .empty-state { text-align: center; padding: 40px; color: #bbb; font-size: 13px; }
+
+  footer { margin-top: 24px; font-size: 11px; color: #bbb; text-align: center; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="brand-bar">
+      <span class="brand-logo">Perks&amp;Rec</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-label">Analysis</span>
+    </div>
+    <h1>Major US Hotel Brands in Peru</h1>
+    <p>Points redemption value across Hyatt, Marriott, IHG, and Hilton properties in Peru. Click any column header to sort.</p>
+  </header>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>Program</label>
+      <select id="f-prog">
+        <option value="">All Programs</option>
+        <option value="Hyatt">Hyatt</option>
+        <option value="Marriott">Marriott</option>
+        <option value="IHG">IHG</option>
+        <option value="Hilton">Hilton</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Stars</label>
+      <select id="f-stars">
+        <option value="">All Stars</option>
+        <option value="5">★★★★★ (5)</option>
+        <option value="4">★★★★ (4)</option>
+        <option value="3">★★★ (3)</option>
+        <option value="2">★★ (2)</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Award Avail.</label>
+      <select id="f-avail">
+        <option value="">Any Availability</option>
+        <option value="70">High (70%+)</option>
+        <option value="20">Medium (20–69%)</option>
+        <option value="1">Low (1–19%)</option>
+        <option value="0">None / Unknown</option>
+      </select>
+    </div>
+    <button class="reset-btn" id="reset-btn">Reset filters</button>
+    <span class="result-count" id="result-count"></span>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th data-col="name">Hotel <i class="icon">↕</i></th>
+          <th data-col="prog">Program <i class="icon">↕</i></th>
+          <th data-col="cpp" style="text-align:right">Avg. CPP <i class="icon">↕</i></th>
+          <th data-col="quality">Stars <i class="icon">↕</i></th>
+          <th data-col="avail" style="text-align:right">Award Avail. <i class="icon">↕</i></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    Source: MaxMyPoint Data as of April 17, 2026 &nbsp;&middot;&nbsp; Perks&amp;Rec | <a href="https://www.perksandrec.com" target="_blank" style="color:#bbb; text-decoration:underline;">www.perksandrec.com</a>
+  </footer>
+
+</div>
+
+<script>
+const hotels = [
+  { name: "The Legend Paracas Resort", loc: "Paracas", prog: "Hyatt", cpp: 1.8, avail: 95, quality: 5 },
+  { name: "Inkaterra Hacienda Urubamba", loc: "Huayoccari", prog: "Hyatt", cpp: 1.4, avail: 0, quality: 5 },
+  { name: "Explora Sacred Valley", loc: "Urubamba", prog: "Hyatt", cpp: 1.2, avail: 2, quality: 5 },
+  { name: "Titilaka", loc: "Puno", prog: "Hyatt", cpp: 1.2, avail: 0, quality: 5 },
+  { name: "Inkaterra Machu Picchu Pueblo", loc: "Urubamba", prog: "Hyatt", cpp: 1.1, avail: 55, quality: 5 },
+  { name: "Tambo del Inka, Luxury Collection", loc: "Sacred Valley", prog: "Marriott", cpp: 0.9, avail: 11, quality: 5 },
+  { name: "Sol y Luna", loc: "Urubamba", prog: "Hyatt", cpp: 0.8, avail: 0, quality: 5 },
+  { name: "JW Marriott Hotel Lima", loc: "Lima", prog: "Marriott", cpp: 0.7, avail: 96, quality: 5 },
+  { name: "Hotel Paracas, Luxury Collection", loc: "Paracas", prog: "Marriott", cpp: 0.6, avail: 94, quality: 5 },
+  { name: "Palacio del Inka, Luxury Collection", loc: "Cusco", prog: "Marriott", cpp: 0.6, avail: 92, quality: 5 },
+  { name: "JW Marriott El Convento Cusco", loc: "Cusco", prog: "Marriott", cpp: 0.5, avail: 97, quality: 5 },
+  { name: "Hyatt Centric San Isidro Lima", loc: "Lima", prog: "Hyatt", cpp: 2.0, avail: 99, quality: 4 },
+  { name: "Las Qolqas", loc: "Ollantaytambo", prog: "Hyatt", cpp: 1.4, avail: 70, quality: 4 },
+  { name: "Humano", loc: "Lima", prog: "Marriott", cpp: 0.6, avail: 91, quality: 4 },
+  { name: "Westin Lima", loc: "Lima", prog: "Marriott", cpp: 0.8, avail: 96, quality: 4 },
+  { name: "InterContinental Real Lima", loc: "Lima", prog: "IHG", cpp: 0.6, avail: 95, quality: 4 },
+  { name: "Vignette Collection Miraflores", loc: "Lima", prog: "IHG", cpp: 0.6, avail: 95, quality: 4 },
+  { name: "Hilton Lima Miraflores", loc: "Lima", prog: "Hilton", cpp: 0.5, avail: 90, quality: 4 },
+  { name: "Cirqa", loc: "Arequipa", prog: "Hyatt", cpp: null, avail: 89, quality: 4 },
+  { name: "Villa Barranco", loc: "Lima", prog: "Hyatt", cpp: null, avail: null, quality: 4 },
+  { name: "Andenia Boutique Hotel", loc: "Pisac-Urubamba", prog: "Hyatt", cpp: 0.9, avail: 98, quality: 3 },
+  { name: "Aloft Lima Miraflores", loc: "Lima", prog: "Marriott", cpp: 0.8, avail: 96, quality: 3 },
+  { name: "AC Hotel Lima Miraflores", loc: "Lima", prog: "Marriott", cpp: 0.7, avail: 95, quality: 3 },
+  { name: "Courtyard Lima Miraflores", loc: "Lima", prog: "Marriott", cpp: 0.7, avail: 96, quality: 3 },
+  { name: "Holiday Inn Lima Miraflores", loc: "Lima", prog: "IHG", cpp: 0.6, avail: 95, quality: 3 },
+  { name: "Hotel Indigo Lima Miraflores", loc: "Lima", prog: "IHG", cpp: 0.6, avail: 92, quality: 3 },
+  { name: "Crowne Plaza Lima", loc: "Lima", prog: "IHG", cpp: 0.5, avail: 95, quality: 3 },
+  { name: "Hilton Garden Inn Lima Miraflores", loc: "Lima", prog: "Hilton", cpp: 0.5, avail: 80, quality: 3 },
+  { name: "Sheraton Lima", loc: "Lima", prog: "Marriott", cpp: 0.5, avail: 95, quality: 3 },
+  { name: "DoubleTree Iquitos", loc: "Iquitos", prog: "Hilton", cpp: 0.5, avail: 82, quality: 3 },
+  { name: "DoubleTree Resort Paracas", loc: "Paracas", prog: "Hilton", cpp: 0.4, avail: 1, quality: 3 },
+  { name: "Hilton Garden Inn Cusco", loc: "Cusco", prog: "Hilton", cpp: 0.4, avail: 96, quality: 3 },
+  { name: "DoubleTree Lima San Isidro", loc: "Lima", prog: "Hilton", cpp: 0.4, avail: 81, quality: 3 },
+  { name: "DoubleTree Lima Miraflores El Pardo", loc: "Lima", prog: "Hilton", cpp: 0.4, avail: 60, quality: 3 },
+  { name: "DoubleTree Trujillo", loc: "Trujillo", prog: "Hilton", cpp: 0.4, avail: 81, quality: 3 },
+  { name: "Hilton Garden Inn Lima Surco", loc: "Lima", prog: "Hilton", cpp: 0.4, avail: 98, quality: 3 },
+  { name: "Fairfield Lima Miraflores", loc: "Lima", prog: "Marriott", cpp: 0.7, avail: 96, quality: 2 },
+  { name: "Holiday Inn Express Lima San Isidro", loc: "Lima", prog: "IHG", cpp: 0.6, avail: 95, quality: 2 },
+  { name: "Holiday Inn Lima Airport", loc: "Lima", prog: "IHG", cpp: 0.5, avail: 95, quality: 2 },
+  { name: "Hampton by Hilton Lima San Isidro", loc: "Lima", prog: "Hilton", cpp: 0.4, avail: 100, quality: 2 },
+  { name: "Motto by Hilton Cusco", loc: "Cusco", prog: "Hilton", cpp: 0.4, avail: 100, quality: 2 },
+  { name: "Hampton by Hilton Arequipa", loc: "Arequipa", prog: "Hilton", cpp: 0.3, avail: 98, quality: 2 },
+  { name: "Hampton by Hilton Cusco", loc: "Cusco", prog: "Hilton", cpp: null, avail: 97, quality: 2 },
+];
+
+let sortCol = 'quality', sortDir = -1;
+
+function availClass(v) {
+  if (v === null) return 'avail na';
+  if (v >= 70) return 'avail high';
+  if (v >= 20) return 'avail mid';
+  if (v >= 1) return 'avail low';
+  return 'avail na';
+}
+
+function stars(q) {
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += `<span class="${i <= q ? 'star-on' : 'star-off'}">★</span>`;
+  return s;
+}
+
+function getFiltered() {
+  const prog  = document.getElementById('f-prog').value;
+  const star  = document.getElementById('f-stars').value;
+  const avail = document.getElementById('f-avail').value;
+
+  return hotels.filter(h => {
+    if (prog && h.prog !== prog) return false;
+    if (star && h.quality !== +star) return false;
+    if (avail !== '') {
+      const av = h.avail;
+      if (avail === '70'  && !(av !== null && av >= 70)) return false;
+      if (avail === '20'  && !(av !== null && av >= 20 && av < 70)) return false;
+      if (avail === '1'   && !(av !== null && av >= 1  && av < 20)) return false;
+      if (avail === '0'   && !(av === null || av === 0)) return false;
+    }
+    return true;
+  });
+}
+
+function render() {
+  const data = getFiltered().sort((a, b) => {
+    let av = a[sortCol], bv = b[sortCol];
+    if (av === null) av = -Infinity;
+    if (bv === null) bv = -Infinity;
+    let primary = typeof av === 'string' ? sortDir * av.localeCompare(bv) : sortDir * (bv - av);
+    if (primary !== 0) return primary;
+    if (sortCol === 'quality') return (b.avail ?? -1) - (a.avail ?? -1);
+    if (sortCol === 'avail')   return b.quality - a.quality;
+    return 0;
+  });
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No properties match the selected filters.</td></tr>`;
+  } else {
+    data.forEach(h => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div class="hotel-name">${h.name}</div>
+          <div class="hotel-loc">${h.loc}</div>
+        </td>
+        <td><span class="badge badge-${h.prog.toLowerCase()}">${h.prog}</span></td>
+        <td class="cpp-val">${h.cpp !== null ? h.cpp.toFixed(1) + '¢' : '<span class="na">—</span>'}</td>
+        <td><span class="stars">${stars(h.quality)}</span></td>
+        <td class="${availClass(h.avail)}">${h.avail !== null ? h.avail + '%' : '—'}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('result-count').textContent = `${data.length} of ${hotels.length} properties`;
+
+  document.querySelectorAll('th').forEach(th => {
+    th.classList.remove('active');
+    th.querySelector('.icon').textContent = '↕';
+  });
+  document.querySelectorAll(`th[data-col="${sortCol}"]`).forEach(th => {
+    th.classList.add('active');
+    th.querySelector('.icon').textContent = sortDir === -1 ? '↓' : '↑';
+  });
+}
+
+document.querySelectorAll('th').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    sortCol === col ? sortDir *= -1 : (sortCol = col, sortDir = (col === 'name' || col === 'prog') ? 1 : -1);
+    render();
+  });
+});
+
+['f-prog','f-stars','f-avail'].forEach(id => {
+  document.getElementById(id).addEventListener('change', render);
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  document.getElementById('f-prog').value = '';
+  document.getElementById('f-stars').value = '';
+  document.getElementById('f-avail').value = '';
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
